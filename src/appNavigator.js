@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Header from './components/header/header';
 import Home from './components/home/home';
+import MatchesScreen from './components/matches/matches';
 import Footer from "./components/footer/footer";
 
 const Stack = createStackNavigator();
@@ -18,6 +19,7 @@ export default function AppNavigator() {
           }}
         >
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="MatchesScreen" component={MatchesScreen} />
         </Stack.Navigator>
         <Footer />
       </View>

@@ -1,21 +1,28 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const Header = () => {
+    const navigation = useNavigation();
+    const handleTitle = () => {
+        navigation.navigate('Home');
+    };
+
     return (
         <View style={styles.header}>
             <View style={styles.containerHeader}>
-            <Text style={styles.title}>FutboLive</Text>
-            <View style={styles.searchContainer}>
-                <TextInput 
-                    style={styles.searchInput} 
-                    placeholder="Buscar" 
-                />
-                <Ionicons name="search" size={24} color="white" />
+                <TouchableOpacity onPress={handleTitle}>
+                    <Text style={styles.title}>FutboLive</Text>
+                </TouchableOpacity>
+                <View style={styles.searchContainer}>
+                    <TextInput 
+                        style={styles.searchInput} 
+                        placeholder="Buscar" 
+                    />
+                    <Ionicons name="search" size={24} color="white" />
+                </View>
             </View>
-            </View>
-            
         </View>
     );
 };

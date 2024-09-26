@@ -1,56 +1,81 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator } from 'react-native';
-import axios from 'axios';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
-    axios('http://localhost:3001/api/leagues')
-      .then((res) => {
-        if (Array.isArray(res.data.response)) {
-          setData(res.data.response);
+    const myHeaders = new Headers();
+    myHeaders.append("x-rapidapi-key", "dc6441bc575098156718e131cc52ee99"); 
+    myHeaders.append("x-rapidapi-host", "v3.football.api-sports.io");
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch("https://v3.football.api-sports.io/leagues", requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta de la API');
+        }
+        return response.json();
+      })
+      .then(result => {
+        if (result.response && Array.isArray(result.response)) {
+          setData(result.response);
         } else {
-          setData([]);
-          console.error('La respuesta del servidor no contiene un array válido:', res.data);
+          setError('No se encontraron ligas.');
         }
         setLoading(false);
       })
-      .catch((err) => {
-        setError('Error fetching leagues');
+      .catch(err => {
+        setError(err.message);
         setLoading(false);
-        console.error("Error fetching leagues:", err);
       });
   }, []);
 
   if (loading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="green" />
-        <Text>Cargando...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Cargando datos...</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.centered}>
+      <View style={styles.loadingContainer}>
         <Text>{error}</Text>
       </View>
     );
   }
 
+  const handleLogoPress = (leagueId) => {
+    console.log(`Navegando a MatchesScreen con leagueId: ${leagueId}`);
+    navigation.navigate('MatchesScreen', { leagueId });
+  };
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {data.map((league) => (
-          <View key={league.id} style={styles.leagueContainer}>
-            <Text style={styles.leagueTitle}>{league.name}</Text>
-            <Image source={{ uri: league.logo }} style={styles.logo} />
-          </View>
-        ))}
+        <View style={styles.gridContainer}>
+          {data.length > 0 ? (
+            data.map((item) => (
+              <TouchableOpacity key={item.league.id} style={styles.leagueContainer} onPress={() => handleLogoPress(item.league.id)}>
+                <Image source={{ uri: item.league.logo }} style={styles.logo} />
+                <Text style={styles.leagueName}>{item.league.name}</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text>No se encontraron ligas.</Text>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
@@ -59,27 +84,38 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
+    marginTop: 25,
   },
   scrollContent: {
     paddingBottom: 60,
-  },
-  leagueContainer: {
-    marginBottom: 20,
     alignItems: 'center',
   },
-  leagueTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-  },
-  centered: {
+  loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  gridContainer: {
     marginTop: 50,
+    flexDirection: 'row',
+    flexWrap: 'wrap', 
+    justifyContent: 'space-between',
+  },
+  leagueContainer: {
+    width: '30%',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: '100%',
+    height: 100,
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  leagueName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
