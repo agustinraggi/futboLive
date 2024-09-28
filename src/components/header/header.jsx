@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Header = () => {
@@ -11,18 +10,9 @@ const Header = () => {
 
     return (
         <View style={styles.header}>
-            <View style={styles.containerHeader}>
-                <TouchableOpacity onPress={handleTitle}>
-                    <Text style={styles.title}>FutboLive</Text>
-                </TouchableOpacity>
-                <View style={styles.searchContainer}>
-                    <TextInput 
-                        style={styles.searchInput} 
-                        placeholder="Buscar" 
-                    />
-                    <Ionicons name="search" size={24} color="white" />
-                </View>
-            </View>
+            <TouchableOpacity onPress={handleTitle} style={styles.titleContainer}>
+                <Text style={styles.title}>FutboLive</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -30,36 +20,23 @@ const Header = () => {
 const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         padding: 15,
         backgroundColor: 'green',
         position: 'absolute',
-        width: "100%",
+        width: '100%',
+        top: 0,
     },
-    containerHeader: {
-        marginTop: 30,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: 130,
+    titleContainer: {
+        flex: 1,
+        marginTop: 35,
     },
     title: {
         fontSize: 20,
         color: 'white',
-    },
-    searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    searchInput: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 25,
-        padding: 5,
-        width: 100,
-        marginRight: 5,
+        textAlign: 'center',
     },
 });
 
-export default Header;
+export default Header;
